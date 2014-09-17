@@ -1,5 +1,3 @@
-This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/.
-
 ### ofxEdgerControl
 
 This is an openFrameworks addon for interfacing with the [Edgertronic High Speed Camera](http://edgertronic.com/). It's based on code by Jesse Garrison, Dan Moore, and Gene Kogan.
