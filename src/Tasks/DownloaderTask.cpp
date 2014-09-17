@@ -44,7 +44,7 @@ void DownloaderTask::update(ofEventArgs& args){
 
 void DownloaderTask::triggerDownload(){
     ofLog(OF_LOG_NOTICE)<<"Download Triggered"<<endl;
-    ofHttpResponse response = ofLoadURL("http://10.11.12.13/last_saved_filename");
+    ofHttpResponse response = ofLoadURL("http://10.11.12.13/get_last_saved_filename");
     ofLog(OF_LOG_NOTICE)<<response.data<<endl;
     
     string newFile = ofToString(response.data);

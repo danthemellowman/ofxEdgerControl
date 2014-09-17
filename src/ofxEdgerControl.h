@@ -18,6 +18,7 @@ public:
     void update();
     void draw();
     
+    void setCapture(bool capture);
     void toggleCapture();
     
     string getCamState() {return camState;}
@@ -37,6 +38,18 @@ public:
     template <typename ListenerClass, typename ListenerMethod>
     void addDownloadFinishedListener(ListenerClass *listener, ListenerMethod method) {
         ofAddListener(captureDownloader.downloadFinished, listener, method);
+    }
+    template <typename ListenerClass, typename ListenerMethod>
+    void addCameraStateListener(ListenerClass *listener, ListenerMethod method) {
+        ofAddListener(cameraStatus.newStateEvent, listener, method);
+    }
+    template <typename ListenerClass, typename ListenerMethod>
+    void addCameraLevelListener(ListenerClass *listener, ListenerMethod method) {
+        ofAddListener(cameraStatus.newLevelEvent, listener, method);
+    }
+    template <typename ListenerClass, typename ListenerMethod>
+    void addCameraFlagListener(ListenerClass *listener, ListenerMethod method) {
+        ofAddListener(cameraStatus.newFlagEvent, listener, method);
     }
     
     void downloadStart(float & i);

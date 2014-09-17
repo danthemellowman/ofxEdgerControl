@@ -14,13 +14,13 @@ void ofxEdgerControl::setup() {
     frameTask.setup();
     cameraStatus.setup();
     captureDownloader.setup();
-    ofAddListener(cameraStatus.newStateEvent, this, &ofxEdgerControl::newState);
-    ofAddListener(cameraStatus.newLevelEvent, this, &ofxEdgerControl::newLevel);
-    ofAddListener(cameraStatus.newFlagEvent, this, &ofxEdgerControl::newFlag);
-
+    
     addDownloadStartedListener(this, &ofxEdgerControl::downloadStart);
     addDownloadProgressListener(this, &ofxEdgerControl::downloadProgress);
     addDownloadFinishedListener(this, &ofxEdgerControl::downloadFinish);
+    addCameraStateListener(this, &ofxEdgerControl::newState);
+    addCameraLevelListener(this, &ofxEdgerControl::newLevel);
+    addCameraFlagListener(this, &ofxEdgerControl::newFlag);
 }
 
 //--------
@@ -109,8 +109,13 @@ void ofxEdgerControl::setupUI(){
 }
 
 //--------
+void ofxEdgerControl::setCapture(bool capture) {
+    this->capture = capture;
+}
+
+//--------
 void ofxEdgerControl::toggleCapture() {
-    capture = !capture;
+    setCapture(!capture);
 }
 
 //--------
