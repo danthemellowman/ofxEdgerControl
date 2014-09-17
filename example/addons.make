@@ -1,0 +1,10 @@
+ofxOsc
+ofxXmlSettings
+ofxEdgerControl
+ofxHTTP
+ofxIO
+ofxJSON
+ofxMediaType
+ofxSSLManager
+ofxTaskQueue
+ofxUI
