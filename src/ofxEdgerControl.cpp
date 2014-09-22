@@ -2,16 +2,13 @@
 
 //--------
 void ofxEdgerControl::setup() {
-    ofSetFrameRate(60);
-    ofSetVerticalSync(true);
-    
     capture = false;
     download = false;
     configure = false;
     visible = true;
     setupUI();
     
-    frameTask.setup();
+    //frameTask.setup();
     cameraStatus.setup();
     captureDownloader.setup();
     
@@ -25,7 +22,7 @@ void ofxEdgerControl::setup() {
 
 //--------
 void ofxEdgerControl::exit() {
-    frameTask.exit();
+    //frameTask.exit();
     cameraStatus.exit();
     captureDownloader.exit();
     ofRemoveListener(cameraStatus.newStateEvent, this, &ofxEdgerControl::newState);
@@ -86,9 +83,9 @@ void ofxEdgerControl::update(){
 
 //--------
 void ofxEdgerControl::draw() {
-    if (visible) {
-        frameTask.getCurrentFrame()->draw(0, 0, 640, 360);
-    }
+//    if (visible) {
+//        frameTask.getCurrentFrame()->draw(0, 0, 640, 360);
+//    }
 }
 
 //--------

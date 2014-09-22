@@ -93,7 +93,7 @@ void DownloaderTask::onTaskFinished(const ofx::TaskQueueEventArgs& args)
     {
         captures[args.getTaskId()].progress = 1;
         captures[args.getTaskId()].state = Capture::SUCCESS;
-        
+        ofNotifyEvent(downloadProgress, progress, this);
         if(buffers.swapFront()){
             string filename = ofGetTimestampString()+".mov";
             ofBuffer & capture = buffers.getFront();
