@@ -28,14 +28,6 @@ public:
     void newLevel(int & i);
     
     template <typename ListenerClass, typename ListenerMethod>
-    void addDownloadStartedListener(ListenerClass *listener, ListenerMethod method) {
-        ofAddListener(captureDownloader.downloadStarted, listener, method);
-    }
-    template <typename ListenerClass, typename ListenerMethod>
-    void addDownloadProgressListener(ListenerClass *listener, ListenerMethod method) {
-        ofAddListener(captureDownloader.downloadProgress, listener, method);
-    }
-    template <typename ListenerClass, typename ListenerMethod>
     void addDownloadFinishedListener(ListenerClass *listener, ListenerMethod method) {
         ofAddListener(captureDownloader.downloadFinished, listener, method);
     }

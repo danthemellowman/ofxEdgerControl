@@ -12,8 +12,7 @@ void ofxEdgerControl::setup() {
     cameraStatus.setup();
     captureDownloader.setup();
     
-    addDownloadStartedListener(this, &ofxEdgerControl::downloadStart);
-    addDownloadProgressListener(this, &ofxEdgerControl::downloadProgress);
+
     addDownloadFinishedListener(this, &ofxEdgerControl::downloadFinish);
     addCameraStateListener(this, &ofxEdgerControl::newState);
     addCameraLevelListener(this, &ofxEdgerControl::newLevel);

@@ -47,6 +47,10 @@ void StatusTask::update(ofEventArgs& args){
         }
     }
     
+    if(ofGetFrameNum()%16==0){
+        Poco::UUID uuid = statusRefresh.get(statusURL);
+    }
+    
     StatusMap::iterator iter = statusMap.begin();
     
     while (iter != statusMap.end())
@@ -95,7 +99,6 @@ void StatusTask::onTaskFinished(const ofx::TaskQueueEventArgs& args)
     {
         statusMap[args.getTaskId()].progress = 1;
         statusMap[args.getTaskId()].state = Status::SUCCESS;
-        Poco::UUID uuid = statusRefresh.get(statusURL);
     }
 }
 
