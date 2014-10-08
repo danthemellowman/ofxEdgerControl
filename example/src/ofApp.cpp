@@ -4,8 +4,7 @@
 void ofApp::setup(){
     edgertronic.setup();
     
-    edgertronic.addDownloadStartedListener(this, &ofApp::downloadStart);
-    edgertronic.addDownloadProgressListener(this, &ofApp::downloadProgress);
+
     edgertronic.addDownloadFinishedListener(this, &ofApp::downloadFinish);
 }
 
@@ -25,10 +24,6 @@ void ofApp::draw(){
     }
 }
 
-//--------
-void ofApp::downloadStart(float & i){
-    
-}
 
 //--------
 void ofApp::downloadFinish(string & file){
@@ -37,10 +32,6 @@ void ofApp::downloadFinish(string & file){
     video.play();
 }
 
-//--------
-void ofApp::downloadProgress(float & i){
-    
-}
 
 //---------
 void ofApp::keyPressed(int key){

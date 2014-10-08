@@ -94,7 +94,6 @@ void ofxEdgerControl::setupUI(){
     ui->addFPS();
     ui->addSpacer();
     ui->addSlider("Level", 0.0, 100.0, &saveProgress);
-    ui->addSlider("Download Progress", 0.0, 100.0, &loadProgress);
     ui->addSpacer();
     ui->addToggle("Trigger", &capture);
     ui->addSpacer();
@@ -166,18 +165,12 @@ void ofxEdgerControl::newLevel(int & i){
 
 //--------
 void ofxEdgerControl::downloadStart(float & i){
-    loadProgress = i * 100.0;   // percent
 
 }
 
 //--------
 void ofxEdgerControl::downloadFinish(string & file){
 
-}
-
-//--------
-void ofxEdgerControl::downloadProgress(float & i){
-    loadProgress = i * 100.0;   // percent
 }
 
 //--------

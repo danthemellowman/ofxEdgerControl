@@ -46,7 +46,7 @@ public:
     
     void downloadStart(float & i);
     void downloadFinish(string & file);
-    void downloadProgress(float & i);
+  
     
     void onGuiEvent(ofxUIEventArgs& e);
     
