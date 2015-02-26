@@ -54,6 +54,7 @@ void DownloaderTask::exit(){
 
 void DownloaderTask::urlResponse(ofHttpResponse & response){
     if(response.status==200){
+        //string filename = ofGetTimestampString()+".mov";
         string filename = "/Users/Shared/video/"+ofGetTimestampString()+".mov";
         ofFile file(filename, ofFile::WriteOnly);
         file.writeFromBuffer(response.data);

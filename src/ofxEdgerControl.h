@@ -14,8 +14,15 @@ class ofxEdgerControl
 {
 public:
     void setup();
+    void setupDownloader();
     void exit();
     void update();
+    
+    void updateCaptureApp();
+    void updateRenderApp();
+    
+    void updateAndDownload();
+        
     void draw();
     
     void setCapture(bool capture);
@@ -53,6 +60,10 @@ public:
     void setGuiVisible(bool visible);
     void toggleGuiVisible();
     
+    void toggleDownloadReady();
+    
+    bool bCameraReady;
+    
 private:
     
     FrameTask frameTask;
@@ -73,7 +84,7 @@ private:
     float desiredISO, desiredShutter, desiredDuration;
     float preTrigger;
     
-    bool capture, configure, download;
+    bool capture, configure, download, triggerDownload;
 
     bool visible;
 };

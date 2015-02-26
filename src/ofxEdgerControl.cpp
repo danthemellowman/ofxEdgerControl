@@ -3,20 +3,33 @@
 //--------
 void ofxEdgerControl::setup() {
     capture = false;
-    download = false;
     configure = false;
     visible = true;
+    bCameraReady = false;
     setupUI();
     
     //frameTask.setup();
     cameraStatus.setup();
-    captureDownloader.setup();
+//    captureDownloader.setup();
     
 
-    addDownloadFinishedListener(this, &ofxEdgerControl::downloadFinish);
+   // addDownloadFinishedListener(this, &ofxEdgerControl::downloadFinish);
     addCameraStateListener(this, &ofxEdgerControl::newState);
     addCameraLevelListener(this, &ofxEdgerControl::newLevel);
     addCameraFlagListener(this, &ofxEdgerControl::newFlag);
+}
+
+void ofxEdgerControl::setupDownloader(){
+    capture = false;
+    configure = false;
+    visible = true;
+    triggerDownload = false;
+
+    //frameTask.setup();
+    captureDownloader.setup();
+    
+    addDownloadFinishedListener(this, &ofxEdgerControl::downloadFinish);
+    
 }
 
 //--------
@@ -31,6 +44,10 @@ void ofxEdgerControl::exit() {
 
 //--------
 void ofxEdgerControl::update(){
+
+}
+
+void ofxEdgerControl::updateCaptureApp(){
     if(capture){
         capture = false;
         if(camState == "READY"){
@@ -47,10 +64,12 @@ void ofxEdgerControl::update(){
         }
     }
     
+    // for capture app -- make sure these conditions are met before sending 'ready' over OSC
     if(camState == "READY" && camState != pCamState && saveProgress == 100){
         if(saveQue.size() > 0){
             saveQue.pop_front();
             download = true;
+            // in capture app, if edgertronic.download = true, signal OSC to render app for download
         }
     }
     
@@ -58,26 +77,30 @@ void ofxEdgerControl::update(){
         configure = false;
     }
     
-    if(download){
-        download = false;
-        captureDownloader.triggerDownload();
-        
-    }
-    
     if(camState == "READY"){
         if(triggerQue.size() > 0){
-            ofHttpResponse reponse = ofLoadURL("http://10.11.12.13/trigger");
-            if(reponse.status < 300){
+            ofHttpResponse response = ofLoadURL("http://10.11.12.13/trigger");
+            if(response.status < 300){
                 ofLog(OF_LOG_NOTICE)<<"Capture Triggered"<<endl;
-                ofLog(OF_LOG_VERBOSE)<<"trigger returend "<<reponse.status<<" status code"<<endl;
+                ofLog(OF_LOG_VERBOSE)<<"trigger returend "<<response.status<<" status code"<<endl;
             }else{
-                ofLog(OF_LOG_ERROR)<<"trigger returend "<<reponse.status<<" status code"<<endl;
+                ofLog(OF_LOG_ERROR)<<"trigger returend "<<response.status<<" status code"<<endl;
             }
             triggerQue.pop_front();
         }
     }
     
     pCamState = camState;
+}
+
+void ofxEdgerControl::updateRenderApp(){
+    
+    if(download){
+        download = false;
+        captureDownloader.triggerDownload();
+        
+    }
+    
 }
 
 //--------
@@ -141,6 +164,7 @@ void ofxEdgerControl::newState(int & i){
     if(i == StatusTask::CAMAPI_STATE_RUNNING_PRETRIGGER_FULL){
         ofLog(OF_LOG_NOTICE)<<"CAMAPI_STATE_RUNNING_PRETRIGGER_FULL"<<endl;
         camState = "READY";
+        bCameraReady = true;
     }
     if(i == StatusTask::CAMAPI_STATE_TRIGGER_CANCELED){
         ofLog(OF_LOG_NOTICE)<<"CAMAPI_STATE_TRIGGER_CANCELED"<<endl;
@@ -171,6 +195,10 @@ void ofxEdgerControl::downloadStart(float & i){
 //--------
 void ofxEdgerControl::downloadFinish(string & file){
 
+}
+
+void ofxEdgerControl::toggleDownloadReady(){
+    download = !download;
 }
 
 //--------
