@@ -105,7 +105,9 @@ void StatusTask::onTaskFinished(const ofx::TaskQueueEventArgs& args)
 
 void StatusTask::onTaskFailed(const ofx::TaskFailedEventArgs& args)
 {
-    
+    ofLog(OF_LOG_NOTICE)<< "TASK FAILED!!" <<endl;
+    ofLog(OF_LOG_NOTICE)<< args.getTaskName(); <<endl;
+    ofLog(OF_LOG_NOTICE)<< args.getTaskId(); <<endl;
 }
 
 

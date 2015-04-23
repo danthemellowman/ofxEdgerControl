@@ -51,13 +51,16 @@ void ofxEdgerControl::updateCaptureApp(){
     if(capture){
         capture = false;
         if(camState == "READY"){
-            ofHttpResponse reponse = ofLoadURL("http://10.11.12.13/trigger");
-            if(reponse.status < 300){
+            ofHttpResponse response = ofLoadURL("http://10.11.12.13/trigger");
+            if(response.status < 300){
                 ofLog(OF_LOG_NOTICE)<<"Capture Triggered"<<endl;
-                ofLog(OF_LOG_VERBOSE)<<"trigger returend "<<reponse.status<<" status code"<<endl;
+                ofLog(OF_LOG_NOTICE)<<"Time Triggered - capture gate: "<< ofGetTimestampString() <<endl;
+                ofLog(OF_LOG_NOTICE)<<"Trigger Returned: " << response.status<<" status code"<<endl;
+                ofLog(OF_LOG_VERBOSE)<<"trigger returend "<<response.status<<" status code"<<endl;
                 saveQue.push_back(ofGetTimestampString());
             }else{
-                ofLog(OF_LOG_ERROR)<<"trigger returend "<<reponse.status<<" status code"<<endl;
+                ofLog(OF_LOG_NOTICE)<<"Trigger Returned: " << response.status<<" status code at "<< ofGetTimestampString()<<endl;
+                ofLog(OF_LOG_ERROR)<<"trigger returend "<<response.status<<" status code"<<endl;
             }
         }else{
             triggerQue.push_back(ofGetTimestampString());
@@ -82,8 +85,11 @@ void ofxEdgerControl::updateCaptureApp(){
             ofHttpResponse response = ofLoadURL("http://10.11.12.13/trigger");
             if(response.status < 300){
                 ofLog(OF_LOG_NOTICE)<<"Capture Triggered"<<endl;
+                ofLog(OF_LOG_NOTICE)<<"Time Triggered - trigque gate: "<< ofGetTimestampString() <<endl;
+                ofLog(OF_LOG_NOTICE)<<"Trigger Returned: " << response.status<<" status code"<<endl;
                 ofLog(OF_LOG_VERBOSE)<<"trigger returend "<<response.status<<" status code"<<endl;
             }else{
+                ofLog(OF_LOG_NOTICE)<<"Trigger Returned: " << response.status<<" status code at "<< ofGetTimestampString()<<endl;
                 ofLog(OF_LOG_ERROR)<<"trigger returend "<<response.status<<" status code"<<endl;
             }
             triggerQue.pop_front();
@@ -154,7 +160,7 @@ void ofxEdgerControl::newState(int & i){
         camState = "RUNNING";
     }
     if(i == StatusTask::CAMAPI_STATE_TRIGGERED){
-        ofLog(OF_LOG_NOTICE)<<"CAMAPI_STATE_TRIGGERED"<<endl;
+        ofLog(OF_LOG_NOTICE)<<"CAMAPI_STATE_TRIGGERED==============================="<<endl;
         camState = "TRIGGERED";
     }
     if(i == StatusTask::CAMAPI_STATE_SAVING){
