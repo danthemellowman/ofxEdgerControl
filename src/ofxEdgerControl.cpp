@@ -64,6 +64,8 @@ void ofxEdgerControl::updateCaptureApp(){
                 //Check below if the trigger actually changed camera state - currently getting an issue where camera will return 200 status, but won't actually change state
                 didTriggerProperly = false;
                 
+                //EXPERIMENTAL:::triggerQue
+                triggerQue.push_back(ofGetTimestampString()); //push in a waiting trigger if it hasn't been triggered yet - may fire immediately after, so this needs to be tested
             }else{
                 ofLog(OF_LOG_NOTICE)<<"Trigger Returned: " << response.status<<" status code at "<< ofGetTimestampString()<<endl;
             }
@@ -78,6 +80,7 @@ void ofxEdgerControl::updateCaptureApp(){
     if (!didTriggerProperly && (camState=="TRIGGERED" || camState=="SAVING")) {
         ofLog(OF_LOG_NOTICE) <<"Camera Triggered properly. Current state: " << camState <<endl;
         didTriggerProperly = true;
+        triggerQue.pop_front(); //clear the experimental queue
     }else{
         //if time since trigger is >10 &&
         if(triggerTimer+5>ofGetElapsedTimef() && camState=="READY" && !didTriggerProperly){ //if it has been 10 seconds since a trigger was fired, and camera is in ready state, then something is likely wrong. Entirely Dependent on capture size and download time
