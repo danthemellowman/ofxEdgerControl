@@ -17,6 +17,9 @@ void ofxEdgerControl::setup() {
     addCameraStateListener(this, &ofxEdgerControl::newState);
     addCameraLevelListener(this, &ofxEdgerControl::newLevel);
     addCameraFlagListener(this, &ofxEdgerControl::newFlag);
+    
+    didTriggerProperly = true;
+    
 }
 
 void ofxEdgerControl::setupDownloader(){
@@ -56,14 +59,31 @@ void ofxEdgerControl::updateCaptureApp(){
                 ofLog(OF_LOG_NOTICE)<<"Capture Triggered"<<endl;
                 ofLog(OF_LOG_NOTICE)<<"Time Triggered - capture gate: "<< ofGetTimestampString() <<endl;
                 ofLog(OF_LOG_NOTICE)<<"Trigger Returned: " << response.status<<" status code"<<endl;
-                ofLog(OF_LOG_VERBOSE)<<"trigger returend "<<response.status<<" status code"<<endl;
-                saveQue.push_back(ofGetTimestampString());
+                saveQue.push_back(ofGetTimestampString()); //say we have one file waiting to be saved
+                triggerTimer = ofGetElapsedTimef();
+                //Check below if the trigger actually changed camera state - currently getting an issue where camera will return 200 status, but won't actually change state
+                didTriggerProperly = false;
+                
             }else{
                 ofLog(OF_LOG_NOTICE)<<"Trigger Returned: " << response.status<<" status code at "<< ofGetTimestampString()<<endl;
-                ofLog(OF_LOG_ERROR)<<"trigger returend "<<response.status<<" status code"<<endl;
             }
         }else{
-            triggerQue.push_back(ofGetTimestampString());
+            triggerQue.push_back(ofGetTimestampString()); //if camera isn't ready, then put the trigger in the queue to be fired off immediately after it is ready
+        }
+    }
+
+    
+    //if its between 0 and 15 seconds after a trigger and the camera is not in a triggering state or a saving state, then the capture failed. even though the camera returned a 200
+    //
+    if (!didTriggerProperly && (camState=="TRIGGERED" || camState=="SAVING")) {
+        ofLog(OF_LOG_NOTICE) <<"Camera Triggered properly. Current state: " << camState <<endl;
+        didTriggerProperly = true;
+    }else{
+        //if time since trigger is >10 &&
+        if(triggerTimer+5>ofGetElapsedTimef() && camState=="READY" && !didTriggerProperly){ //if it has been 10 seconds since a trigger was fired, and camera is in ready state, then something is likely wrong. Entirely Dependent on capture size and download time
+            if(ofGetFrameNum()%15==0){
+                ofLog(OF_LOG_NOTICE) <<"May be an issue with camera triggering. CURRENT STATE: " << camState<<endl;
+            }
         }
     }
     
@@ -80,6 +100,8 @@ void ofxEdgerControl::updateCaptureApp(){
         configure = false;
     }
     
+    //Deprecated??
+    //This is never typically hit unless the camera is told to trigger when it is not ready yet - in a run of 100 captures, this was never hit
     if(camState == "READY"){
         if(triggerQue.size() > 0){
             ofHttpResponse response = ofLoadURL("http://10.11.12.13/trigger");

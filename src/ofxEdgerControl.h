@@ -29,6 +29,7 @@ public:
     void toggleCapture();
     
     string getCamState() {return camState;}
+    bool getDidTriggerProperly(){return didTriggerProperly;}
     
     void newState(int & i);
     void newFlag(int & i);
@@ -63,6 +64,7 @@ public:
     void toggleDownloadReady();
     
     bool bCameraReady;
+
     
 private:
     
@@ -79,6 +81,9 @@ private:
     string camState, pCamState;
     float saveProgress;
     float loadProgress;
+    
+    float triggerTimer;
+    bool didTriggerProperly;
     
     float desiredFramerate, desiredWidth, desiredHeight;
     float desiredISO, desiredShutter, desiredDuration;
