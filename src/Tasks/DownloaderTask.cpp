@@ -32,6 +32,7 @@ void DownloaderTask::update(ofEventArgs& args){
 
 void DownloaderTask::triggerDownload(){
     ofLog(OF_LOG_NOTICE)<<"Download Triggered"<<endl;
+    ofNotifyEvent(downloadStarted, downloadFiles.front(), this); //alert UI that download started...
     ofHttpResponse response = ofLoadURL("http://10.11.12.13/get_last_saved_filename");
     ofLog(OF_LOG_NOTICE)<<response.data<<endl;
     
@@ -41,9 +42,12 @@ void DownloaderTask::triggerDownload(){
     }
     if(newFile != lastFileName){
         lastFileName = newFile;
+        
         ofLog(OF_LOG_NOTICE)<<"Download url "<<downloadURL+"/static/asattachment"+lastFileName<<endl;
         ofLoadURLAsync(downloadURL+"/static/asattachment"+lastFileName);
     }
+    
+    
 }
 
 

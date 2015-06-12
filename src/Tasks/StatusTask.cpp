@@ -79,17 +79,26 @@ void StatusTask::onTaskQueued(const ofx::TaskQueueEventArgs& args)
     newQuery.name = args.getTaskName();
     newQuery.uuid = args.getTaskId();
     statusMap[newQuery.uuid] = newQuery;
+    //ofLog(OF_LOG_NOTICE)<< "TASK QUEUED!! " <<" " <<args.getTaskId().toString() << "  "<<args.getState()<< ofGetTimestampString() <<endl;
+    //cout<<"Status Map Size: " <<statusMap.size()<<endl;
+}
+
+int StatusTask::getStatusQueueSize(){
+    return statusMap.size();
 }
 
 
 void StatusTask::onTaskStarted(const ofx::TaskQueueEventArgs& args)
 {
+    //ofLog(OF_LOG_NOTICE)<< "TASK Started!! " <<" " <<args.getTaskId().toString() << "  "<<args.getState()<< ofGetTimestampString() <<endl;
+    
+
 }
 
 
 void StatusTask::onTaskCancelled(const ofx::TaskQueueEventArgs& args)
 {
-    
+    //ofLog(OF_LOG_NOTICE)<< "TASK Cancelled!! " <<" " <<args.getTaskId().toString() << "  "<<args.getState()<< ofGetTimestampString() <<endl;
 }
 
 
@@ -97,22 +106,24 @@ void StatusTask::onTaskFinished(const ofx::TaskQueueEventArgs& args)
 {
     if (statusMap[args.getTaskId()].state == Status::PENDING)
     {
+        //ofLog(OF_LOG_NOTICE)<< "TASK Finished!! " <<" " <<args.getTaskId().toString() << "  "<<args.getState()<< ofGetTimestampString() <<endl;
         statusMap[args.getTaskId()].progress = 1;
         statusMap[args.getTaskId()].state = Status::SUCCESS;
+        //cout<<"Status Map Size: " <<statusMap.size()<<endl;
     }
 }
 
 
 void StatusTask::onTaskFailed(const ofx::TaskFailedEventArgs& args)
 {
-    ofLog(OF_LOG_NOTICE)<< "TASK FAILED!!" <<endl;
+    //ofLog(OF_LOG_NOTICE)<< "TASK FAILED!! " <<" " <<args.getTaskId().toString() << "  "<<args.getState()<< ofGetTimestampString() <<endl;
 
 }
 
 
 void StatusTask::onTaskProgress(const ofx::TaskProgressEventArgs& args)
 {
-    
+    //ofLog(OF_LOG_NOTICE)<< "TASK Progress!! " <<" " <<args.getTaskId().toString() << "  "<<args.getState()<< ofGetTimestampString() <<endl;
 }
 
 

@@ -19,7 +19,7 @@ void ofxEdgerControl::setup() {
     addCameraFlagListener(this, &ofxEdgerControl::newFlag);
     
     didTriggerProperly = true;
-    
+    setupDownloader();
 }
 
 void ofxEdgerControl::setupDownloader(){
@@ -54,6 +54,8 @@ void ofxEdgerControl::updateCaptureApp(){
     if(capture){
         capture = false;
         if(camState == "READY"){
+            //maybe we try ofxHTTP's get/post request to the camera instead of ofLoadURL?
+            
             ofHttpResponse response = ofLoadURL("http://10.11.12.13/trigger");
             if(response.status < 300){
                 ofLog(OF_LOG_NOTICE)<<"Capture Triggered"<<endl;
@@ -80,7 +82,9 @@ void ofxEdgerControl::updateCaptureApp(){
     if (!didTriggerProperly && (camState=="TRIGGERED" || camState=="SAVING")) {
         ofLog(OF_LOG_NOTICE) <<"Camera Triggered properly. Current state: " << camState <<endl;
         didTriggerProperly = true;
-        triggerQue.pop_front(); //clear the experimental queue
+        if(triggerQue.size()>0){
+            triggerQue.pop_front(); //clear the experimental queue
+        }
     }else{
         //if time since trigger is >10 &&
         if(triggerTimer+5>ofGetElapsedTimef() && camState=="READY" && !didTriggerProperly){ //if it has been 10 seconds since a trigger was fired, and camera is in ready state, then something is likely wrong. Entirely Dependent on capture size and download time
@@ -94,7 +98,7 @@ void ofxEdgerControl::updateCaptureApp(){
     if(camState == "READY" && camState != pCamState && saveProgress == 100){
         if(saveQue.size() > 0){
             saveQue.pop_front();
-            download = true;
+            readyToDownload = true;
             // in capture app, if edgertronic.download = true, signal OSC to render app for download
         }
     }
@@ -106,7 +110,8 @@ void ofxEdgerControl::updateCaptureApp(){
     //Deprecated??
     //This is never typically hit unless the camera is told to trigger when it is not ready yet - in a run of 100 captures, this was never hit
     if(camState == "READY"){
-        if(triggerQue.size() > 0){
+        if(triggerQue.size() > 0 && triggerTimer+1<ofGetElapsedTimef()){ //only do this if its been a period of time since the trigger was last told to fire, otherwise it might try to trigger twice
+            cout<< "TRYING TO TRIGGER FROM QUEUE. It's been this long since I tried to trigger: " << ofGetElapsedTimef()-triggerTimer <<endl;
             ofHttpResponse response = ofLoadURL("http://10.11.12.13/trigger");
             if(response.status < 300){
                 ofLog(OF_LOG_NOTICE)<<"Capture Triggered"<<endl;
@@ -126,10 +131,9 @@ void ofxEdgerControl::updateCaptureApp(){
 
 void ofxEdgerControl::updateRenderApp(){
     
-    if(download){
-        download = false;
+    if(readyToDownload){
+        readyToDownload = false;
         captureDownloader.triggerDownload();
-        
     }
     
 }
@@ -144,6 +148,7 @@ void ofxEdgerControl::draw() {
 //--------
 void ofxEdgerControl::setupUI(){
     ui = new ofxUISuperCanvas("Edgertronic Control");
+    //ui->setFont("Avenir Book.otf");
     ui->setPosition(10, 10);
     ui->addFPS();
     ui->addSpacer();
@@ -152,7 +157,8 @@ void ofxEdgerControl::setupUI(){
     ui->addToggle("Trigger", &capture);
     ui->addSpacer();
     uiStatus = ui->addTextArea("Camera Status: ", camState);
-    ui->ofxUICanvas::autoSizeToFitWidgets();
+    ui->setDimensions(220, 180);
+    //ui->ofxUICanvas::autoSizeToFitWidgets();
     
     ofAddListener(ui->newGUIEvent,this,&ofxEdgerControl::onGuiEvent);
 }
@@ -179,18 +185,22 @@ void ofxEdgerControl::newState(int & i){
     if(i == StatusTask::CAMAPI_STATE_CALIBRATING){
         ofLog(OF_LOG_NOTICE)<<"STATE_CALIBRATING"<<endl;
         camState = "CALIBRATING";
+        bCameraReady = false;
     }
     if(i == StatusTask::CAMAPI_STATE_RUNNING){
         ofLog(OF_LOG_NOTICE)<<"CAMAPI_STATE_RUNNING"<<endl;
         camState = "RUNNING";
+        bCameraReady = false;
     }
     if(i == StatusTask::CAMAPI_STATE_TRIGGERED){
         ofLog(OF_LOG_NOTICE)<<"CAMAPI_STATE_TRIGGERED==============================="<<endl;
         camState = "TRIGGERED";
+        bCameraReady = false;
     }
     if(i == StatusTask::CAMAPI_STATE_SAVING){
         ofLog(OF_LOG_NOTICE)<<"CAMAPI_STATE_SAVING"<<endl;
         camState = "SAVING";
+        bCameraReady = false;
     }
     if(i == StatusTask::CAMAPI_STATE_RUNNING_PRETRIGGER_FULL){
         ofLog(OF_LOG_NOTICE)<<"CAMAPI_STATE_RUNNING_PRETRIGGER_FULL"<<endl;
@@ -229,7 +239,7 @@ void ofxEdgerControl::downloadFinish(string & file){
 }
 
 void ofxEdgerControl::toggleDownloadReady(){
-    download = !download;
+    readyToDownload = !readyToDownload;
 }
 
 //--------
@@ -241,6 +251,10 @@ void ofxEdgerControl::setGuiVisible(bool visible){
 //--------
 void ofxEdgerControl::toggleGuiVisible(){
     setGuiVisible(!visible);
+}
+//--------
+int ofxEdgerControl::getStatusTaskSize(){
+    return cameraStatus.getStatusQueueSize();
 }
 
 

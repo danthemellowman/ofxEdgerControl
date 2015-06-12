@@ -20,6 +20,7 @@ public:
     void exit();
     
 	ofEvent<string> downloadFinished;
+    ofEvent<string> downloadStarted;
 private:
     string downloadURL;
     string lastFileName;

@@ -18,8 +18,9 @@ public:
     void exit();
     void update();
     
-    void updateCaptureApp();
-    void updateRenderApp();
+    void updateAll();
+    void updateCaptureApp(); //used in older versions when the apps were seperated
+    void updateRenderApp(); //used in older versions when the apps were seperated
     
     void updateAndDownload();
         
@@ -38,6 +39,10 @@ public:
     template <typename ListenerClass, typename ListenerMethod>
     void addDownloadFinishedListener(ListenerClass *listener, ListenerMethod method) {
         ofAddListener(captureDownloader.downloadFinished, listener, method);
+    }
+    template <typename ListenerClass, typename ListenerMethod>
+    void addDownloadStartedListener(ListenerClass *listener, ListenerMethod method) {
+        ofAddListener(captureDownloader.downloadStarted, listener, method);
     }
     template <typename ListenerClass, typename ListenerMethod>
     void addCameraStateListener(ListenerClass *listener, ListenerMethod method) {
@@ -59,15 +64,23 @@ public:
     void onGuiEvent(ofxUIEventArgs& e);
     
     void setGuiVisible(bool visible);
+    void setReadyToDownload(bool _readyToDownload){readyToDownload=_readyToDownload;}
+    bool getReadyToDownload(){return readyToDownload;}
+    void setCameraReady(bool _bCameraReady){bCameraReady=_bCameraReady;}
+    bool getCameraReady(){return bCameraReady;}
+    
     void toggleGuiVisible();
     
     void toggleDownloadReady();
     
-    bool bCameraReady;
+    int getTrigQueSize(){return triggerQue.size();};
+    int getSaveQueSize(){return saveQue.size();};\
+    int getStatusTaskSize();
 
     
 private:
     
+    bool bCameraReady;
     FrameTask frameTask;
     StatusTask cameraStatus;
     DownloaderTask captureDownloader;
@@ -89,7 +102,7 @@ private:
     float desiredISO, desiredShutter, desiredDuration;
     float preTrigger;
     
-    bool capture, configure, download, triggerDownload;
+    bool capture, configure, triggerDownload, readyToDownload;
 
     bool visible;
 };

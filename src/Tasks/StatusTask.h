@@ -84,6 +84,8 @@ public:
     ofEvent<int> newFlagEvent;
 	ofEvent<int> newLevelEvent;
     
+    int getStatusQueueSize();
+    
 private:
     StatusMap statusMap;
     ofx::HTTP::DefaultClientTaskQueue statusRefresh;
