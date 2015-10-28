@@ -31,7 +31,7 @@ public:
     }
     
     std::string name;
-    Poco::UUID uuid;
+    std::basic_string<char> uuid;
     float progress;
     std::string message;
     STATE state;
@@ -78,7 +78,7 @@ public:
     void onTaskFailed(const ofx::TaskFailedEventArgs& args);
     void onTaskProgress(const ofx::TaskProgressEventArgs& args);
     void onClientBuffer(const ofx::HTTP::ClientBufferEventArgs& args);
-    typedef std::map<Poco::UUID, Status> StatusMap;
+    typedef std::map<string, Status> StatusMap;
     
     ofEvent<int> newStateEvent;
     ofEvent<int> newFlagEvent;

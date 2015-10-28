@@ -19,7 +19,7 @@ void StatusTask::setup(){
     statusRefresh.registerAllEvents(this);
     ofAddListener(ofEvents().update, this, &StatusTask::update);
     statusURL = "http://10.11.12.13/get_status";
-    Poco::UUID uuid = statusRefresh.get(statusURL);
+    string uuid = statusRefresh.get(statusURL);
 
 }
 
@@ -48,7 +48,7 @@ void StatusTask::update(ofEventArgs& args){
     }
     
     if(ofGetFrameNum()%16==0){
-        Poco::UUID uuid = statusRefresh.get(statusURL);
+        string uuid = statusRefresh.get(statusURL);
     }
     
     StatusMap::iterator iter = statusMap.begin();

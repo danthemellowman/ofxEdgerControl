@@ -29,7 +29,7 @@ public:
     }
     
     std::string name;
-    Poco::UUID uuid;
+    std::string uuid;
     float progress;
     std::string message;
     State state;
@@ -51,7 +51,7 @@ public:
     void onTaskFailed(const ofx::TaskFailedEventArgs& args);
     void onTaskProgress(const ofx::TaskProgressEventArgs& args);
     void onClientBuffer(const ofx::HTTP::ClientBufferEventArgs& args);
-    typedef std::map<Poco::UUID, Frame> FrameMap;
+    typedef std::map<string, Frame> FrameMap;
 private:
     FrameMap frames;
      ofx::HTTP::DefaultClientTaskQueue imgRefresh;
