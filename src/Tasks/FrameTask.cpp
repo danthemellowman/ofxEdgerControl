@@ -63,8 +63,8 @@ void FrameTask::onTaskQueued(const ofx::TaskQueueEventArgs& args)
     // Make a record of the task so we can keep track of its progress.
     Frame newFrame;
     newFrame.name = args.getTaskName();
-//    newFrame.uuid = args.getTaskId();
-    frames[newFrame.name] = newFrame;
+    newFrame.uuid = args.getTaskId();
+    frames[newFrame.uuid] = newFrame;
 }
 
 
