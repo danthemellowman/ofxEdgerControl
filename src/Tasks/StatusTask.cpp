@@ -20,7 +20,7 @@ void StatusTask::setup(){
     ofAddListener(ofEvents().update, this, &StatusTask::update);
     statusURL = "http://10.11.12.13/get_status";
     string uuid = statusRefresh.get(statusURL);
-
+    
 }
 
 void StatusTask::update(ofEventArgs& args){
@@ -60,6 +60,8 @@ void StatusTask::update(ofEventArgs& args){
         if (t.state == Status::SUCCESS)
         {
             statusMap.erase(iter++);
+        }else if(t.state == Status::FAILURE){
+            statusMap.erase(iter++);
         }
         else
         {
@@ -92,7 +94,7 @@ void StatusTask::onTaskStarted(const ofx::TaskQueueEventArgs& args)
 {
     //ofLog(OF_LOG_NOTICE)<< "TASK Started!! " <<" " <<args.getTaskId().toString() << "  "<<args.getState()<< ofGetTimestampString() <<endl;
     
-
+    
 }
 
 
@@ -117,7 +119,7 @@ void StatusTask::onTaskFinished(const ofx::TaskQueueEventArgs& args)
 void StatusTask::onTaskFailed(const ofx::TaskFailedEventArgs& args)
 {
     //ofLog(OF_LOG_NOTICE)<< "TASK FAILED!! " <<" " <<args.getTaskId().toString() << "  "<<args.getState()<< ofGetTimestampString() <<endl;
-
+    
 }
 
 

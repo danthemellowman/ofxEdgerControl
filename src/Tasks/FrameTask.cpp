@@ -38,6 +38,8 @@ void FrameTask::update(ofEventArgs& args){
         if (t.state == Frame::SUCCESS)
         {
             frames.erase(iter++);
+        }else if(t.state == Frame::FAILURE){
+            frames.erase(iter++);
         }
         else
         {
