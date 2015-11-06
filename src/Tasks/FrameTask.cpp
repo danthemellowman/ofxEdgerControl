@@ -94,7 +94,7 @@ void FrameTask::onTaskFinished(const ofx::TaskQueueEventArgs& args)
 
 void FrameTask::onTaskFailed(const ofx::TaskFailedEventArgs& args)
 {
-    
+    frames.erase(args.getTaskId());
 }
 
 

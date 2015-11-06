@@ -8,12 +8,9 @@ void ofxEdgerControl::setup() {
     bCameraReady = false;
     setupUI();
     
-    //frameTask.setup();
     cameraStatus.setup();
-//    captureDownloader.setup();
-    
 
-   // addDownloadFinishedListener(this, &ofxEdgerControl::downloadFinish);
+
     addCameraStateListener(this, &ofxEdgerControl::newState);
     addCameraLevelListener(this, &ofxEdgerControl::newLevel);
     addCameraFlagListener(this, &ofxEdgerControl::newFlag);
@@ -28,16 +25,17 @@ void ofxEdgerControl::setupDownloader(){
     visible = true;
     triggerDownload = false;
 
-    //frameTask.setup();
+    frameTask.setup();
     captureDownloader.setup();
     
-    addDownloadFinishedListener(this, &ofxEdgerControl::downloadFinish);
+//    addDownloadFinishedListener(this, &ofxEdgerControl::downloadFinish);
+//    addDownloadStartedListener(this, &ofxEdgerControl::downloadStart);
     
 }
 
 //--------
 void ofxEdgerControl::exit() {
-    //frameTask.exit();
+    frameTask.exit();
     cameraStatus.exit();
     captureDownloader.exit();
     ofRemoveListener(cameraStatus.newStateEvent, this, &ofxEdgerControl::newState);
@@ -47,15 +45,62 @@ void ofxEdgerControl::exit() {
 
 //--------
 void ofxEdgerControl::update(){
+    if(capture){
+        capture = false;
+        if(camState == "READY"){
+            ofHttpResponse reponse = ofLoadURL("http://10.11.12.13/trigger");
+            if(reponse.status < 300){
+                ofLog(OF_LOG_NOTICE)<<"Capture Triggered"<<endl;
+                ofLog(OF_LOG_VERBOSE)<<"trigger returend "<<reponse.status<<" status code"<<endl;
+                saveQue.push_back(ofGetTimestampString());
+            }else{
+                ofLog(OF_LOG_ERROR)<<"trigger returend "<<reponse.status<<" status code"<<endl;
+            }
+        }else{
+            triggerQue.push_back(ofGetTimestampString());
+        }
+    }
+    
+    if(camState == "READY" && camState != pCamState && saveProgress == 100){
+        if(saveQue.size() > 0){
+            saveQue.pop_front();
+            download = true;
+        }
+    }
+    
+    
+    if(configure){
+        configure = false;
+    }
+    
+    if(download){
+        download = false;
+        captureDownloader.triggerDownload();
+    }
+    
+    
+    if(camState == "READY"){
+        if(triggerQue.size() > 0){
+            ofHttpResponse reponse = ofLoadURL("http://10.11.12.13/trigger");
+            if(reponse.status < 300){
+                ofLog(OF_LOG_NOTICE)<<"Capture Triggered"<<endl;
+                ofLog(OF_LOG_VERBOSE)<<"trigger returend "<<reponse.status<<" status code"<<endl;
+            }else{
+                ofLog(OF_LOG_ERROR)<<"trigger returend "<<reponse.status<<" status code"<<endl;
+            }
+            triggerQue.pop_front();
+        }
+    }
+    
+    pCamState = camState;
 
 }
 
 void ofxEdgerControl::updateCaptureApp(){
     if(capture){
-        capture = false;
+        cout<<capture<<endl;
         if(camState == "READY"){
-            //maybe we try ofxHTTP's get/post request to the camera instead of ofLoadURL?
-            
+            cout<<"camState == READY"<<endl;
             ofHttpResponse response = ofLoadURL("http://10.11.12.13/trigger");
             if(response.status < 300){
                 ofLog(OF_LOG_NOTICE)<<"Capture Triggered"<<endl;
@@ -74,6 +119,7 @@ void ofxEdgerControl::updateCaptureApp(){
         }else{
             triggerQue.push_back(ofGetTimestampString()); //if camera isn't ready, then put the trigger in the queue to be fired off immediately after it is ready
         }
+        capture = false;
     }
 
     
@@ -140,9 +186,11 @@ void ofxEdgerControl::updateRenderApp(){
 
 //--------
 void ofxEdgerControl::draw() {
-//    if (visible) {
-//        frameTask.getCurrentFrame()->draw(0, 0, 640, 360);
-//    }
+    float width = 640;
+    if (visible) {
+        float height = width*frameTask.getCurrentFrame()->getHeight()/frameTask.getCurrentFrame()->getWidth();
+        frameTask.getCurrentFrame()->draw(0, 0, width, height);
+    }
 }
 
 //--------
@@ -228,14 +276,14 @@ void ofxEdgerControl::newLevel(int & i){
     saveProgress = i;
 }
 
-//--------
-void ofxEdgerControl::downloadStart(float & i){
-
+void ofxEdgerControl::downloadStart(string & file){
+    cout<<file<<endl;
 }
 
-//--------
 void ofxEdgerControl::downloadFinish(string & file){
-
+    loaded = true;
+    videoPreview.loadMovie(file);
+    videoPreview.play();
 }
 
 void ofxEdgerControl::toggleDownloadReady(){

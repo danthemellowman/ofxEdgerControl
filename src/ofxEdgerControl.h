@@ -23,7 +23,7 @@ public:
     void updateRenderApp(); //used in older versions when the apps were seperated
     
     void updateAndDownload();
-        
+    
     void draw();
     
     void setCapture(bool capture);
@@ -57,9 +57,9 @@ public:
         ofAddListener(cameraStatus.newFlagEvent, listener, method);
     }
     
-    void downloadStart(float & i);
+    void downloadStart(string & i);
     void downloadFinish(string & file);
-  
+    
     
     void onGuiEvent(ofxUIEventArgs& e);
     
@@ -76,7 +76,7 @@ public:
     int getTrigQueSize(){return triggerQue.size();};
     int getSaveQueSize(){return saveQue.size();};\
     int getStatusTaskSize();
-
+    
     
 private:
     
@@ -84,7 +84,9 @@ private:
     FrameTask frameTask;
     StatusTask cameraStatus;
     DownloaderTask captureDownloader;
-    
+    ofVideoPlayer videoPreview;
+    bool download;
+    bool loaded;
     void setupUI();
     ofxUISuperCanvas* ui;
     ofxUITextArea* uiStatus;
@@ -103,7 +105,7 @@ private:
     float preTrigger;
     
     bool capture, configure, triggerDownload, readyToDownload;
-
+    
     bool visible;
 };
 

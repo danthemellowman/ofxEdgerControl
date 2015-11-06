@@ -2,9 +2,10 @@
 
 //---------
 void ofApp::setup(){
+    ofSetFrameRate(60);
+    ofSetVerticalSync(true);
+    ofSetLogLevel(OF_LOG_NOTICE);
     edgertronic.setup();
-    
-
     edgertronic.addDownloadFinishedListener(this, &ofApp::downloadFinish);
 }
 
@@ -18,9 +19,12 @@ void ofApp::update(){
 
 //---------
 void ofApp::draw(){
+    ofBackground(0, 0, 0);
     edgertronic.draw();
     if (loaded) {
-        video.draw(640, 0);
+        float width = 640;
+        float height = video.getHeight()/video.getWidth()*width;
+        video.draw(640, 0, width, height);
     }
 }
 

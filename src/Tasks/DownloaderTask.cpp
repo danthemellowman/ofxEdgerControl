@@ -32,7 +32,6 @@ void DownloaderTask::update(ofEventArgs& args){
 
 void DownloaderTask::triggerDownload(){
     ofLog(OF_LOG_NOTICE)<<"Download Triggered"<<endl;
-    ofNotifyEvent(downloadStarted, downloadFiles.front(), this); //alert UI that download started...
     ofHttpResponse response = ofLoadURL("http://10.11.12.13/get_last_saved_filename");
     ofLog(OF_LOG_NOTICE)<<response.data<<endl;
     
@@ -49,7 +48,6 @@ void DownloaderTask::triggerDownload(){
     
     
 }
-
 
 void DownloaderTask::exit(){
     ofRemoveListener(ofEvents().update, this, &DownloaderTask::update);
